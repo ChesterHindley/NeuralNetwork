@@ -322,7 +322,7 @@ void ch3attemp2()
 	auto dWh = m.getLayer(0) * delta;
 
 
-	dWh = dWh.hadamardProduct( dReLU(m.getLayer(0)));
+	dWh = dWh.hadamardProduct( activationFunctions::dReLU(m.getLayer(0)));
 
 }
 int main()

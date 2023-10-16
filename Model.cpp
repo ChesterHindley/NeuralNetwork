@@ -5,26 +5,48 @@
 #include <numeric>
 #include <algorithm>
 
-double ReLU(double value)
-{
-	return std::max(0.0, value);
-}
+namespace activationFunctions {
+	double ReLU(double value)
+	{
+		return std::max(0.0, value);
+	}
 
-double dReLU(double value)
-{
-	return value > 0 ? 1. : 0.;
-}
-Matrix ReLU(Matrix m)
-{
-	for (auto& elem : m.data)
-		elem = ReLU(elem);
-	return m;
-}
-Matrix dReLU(Matrix m)
-{
-	for (auto& elem : m.data)
-		elem = dReLU(elem);
-	return m;
+	double dReLU(double value)
+	{
+		return value > 0 ? 1. : 0.;
+	}
+	Matrix ReLU(Matrix m)
+	{
+		for (auto& elem : m.data)
+			elem = ReLU(elem);
+		return m;
+	}
+	Matrix dReLU(Matrix m)
+	{
+		for (auto& elem : m.data)
+			elem = dReLU(elem);
+		return m;
+	}
+	double sigmoid(double x)
+	{
+		return 1. / (1 + exp(-x));
+	}
+	double dSigmoid(double x)
+	{
+		return x*(1-x);
+	}
+	Matrix sigmoid(Matrix m)
+	{
+		for (auto& elem : m.data)
+			elem = sigmoid(elem);
+		return m;
+	}
+	Matrix dSigmoid(Matrix m)
+	{
+		for (auto& elem : m.data)
+			elem = dSigmoid(elem);
+		return m;
+	}
 }
 
 

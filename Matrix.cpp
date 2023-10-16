@@ -84,6 +84,8 @@ Matrix Matrix::vectorize() const
 
 }
 
+
+// unused
 Matrix Matrix::ewSquare() const
 {
 	Matrix ret = *this;
