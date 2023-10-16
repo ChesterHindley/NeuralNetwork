@@ -94,6 +94,19 @@ Matrix Matrix::ewSquare() const
 	return ret;
 }
 
+Matrix Matrix::hadamardProduct(Matrix m) const
+{
+	assert(cols == m.cols && rows == m.rows);
+	 Matrix ret(*this);
+	 for (int i = 0; i < cols; i++)
+		 for (int j = 0; j < rows; j++)
+			 ret(i, j) *= m(i, j);
+	 return ret;
+	 
+
+	 
+}
+
 
 Matrix& Matrix::fillRandom(dataType min, dataType max)
 {

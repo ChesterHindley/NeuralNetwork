@@ -130,15 +130,25 @@ void ch2task1()
 	Matrix input({ 2 }, 1, 1);
 	static constexpr double alpha = 0.1;
 
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < 4; i++) {
 		auto output = m.predict(input);
 		auto delta = 2. / output.getRows() * (output - expected) * input.transpose();
 		auto updatedWeights = m.getLayer(0) - alpha * delta;
 		m.updateLayer(0, updatedWeights);
 	}
+	std::cout << std::setprecision(15);
+	std::cout << "Expected error: 0.0000001024 got: " << m.getError();
+	std::cout <<"\nExpected: 0.80032, got: " << m.predict(input);
+	
 
-	std::cout <<"Expected: 0.80032, got: " << m.predict(input);
-
+	for (int i = 0; i < 19; i++) {
+		auto output = m.predict(input);
+		auto delta = 2. / output.getRows() * (output - expected) * input.transpose();
+		auto updatedWeights = m.getLayer(0) - alpha * delta;
+		m.updateLayer(0, updatedWeights);
+	}
+	std::cout << "Expected:  0.800000000000010, got: " << m.predict(input);
+	std::cout << "Expected error: 0 got: " << m.getError() << "\n";
 
 }
 void ch2t2()
@@ -171,6 +181,7 @@ void ch2t2()
 
 	m.learn(1000,input, std::move(expected), 0.01);
 	std::cout << m.predict(input);
+	std::cout << "Error: " << m.getError() << "\n";
 
 }
 void ch2t3()
@@ -250,8 +261,11 @@ void ch3()
 	auto output =  m.predict(input);
 	auto delta = 2. / output.getRows() * (output - expected);
 	auto hiddenLayerDelta = m.getLayer(1).transpose() * delta;
-	auto temp = input.transpose();
-	auto view = std::ranges::views::cartesian_product(hiddenLayerDelta.data, input.data);
+
+	// for multiple series of input it might be necessary to transpose input for correct sizes of matrices
+	//auto temp = input.transpose();
+
+	const auto view = std::ranges::views::cartesian_product(hiddenLayerDelta.data, input.data);
 	for (const auto& [i1,i2] : view)
 	{
 		std::cout << "(" << i1 << ", " << i2 << ")\n";
@@ -265,6 +279,52 @@ void ch3()
 	std::cout << m.getLayer(0) <<"\n" << m.getLayer(1);
 	
 }
+void ch3attemp2()
+{
+	Model m;
+	Matrix Wh(
+		{
+			0.1,0.1,-0.3,
+			0.1,0.2,0.0,
+			0.0,0.7,0.1,
+			0.2,0.4,0.0,
+			-0.3,0.5,0.1
+		}, 5, 3);
+	m.addLayer(std::move(Wh));
+	Matrix Wy(
+		{
+			0.7,0.9,-0.4,0.8,0.1,
+			0.8,0.5,0.3,0.1,0.0,
+			-0.3,0.9,0.3,0.1,-0.2,
+		}, 3, 5);
+
+	m.addLayer(std::move(Wy));
+	
+	Matrix input(
+		{
+			0.5,0.1,0.2,0.8,
+			0.75,0.3,0.1,0.9,
+			0.1,0.7,0.6,0.2
+		}, 3, 4);
+
+	Matrix expected(
+		{
+			0.1,0.5,0.1,0.7,
+			1.0,0.2,0.3,0.6,
+			0.1,-0.5,0.2,0.2,
+		}, 3, 4);
+
+	constexpr static double alpha = 0.01;
+	auto output = m.predict(input);
+	auto delta = 2. / m.getLayer(1).getRows() * (output - expected);
+
+
+	auto dWh = m.getLayer(0) * delta;
+
+
+	dWh = dWh.hadamardProduct( dReLU(m.getLayer(0)));
+
+}
 int main()
 {
 	//testNeural();
@@ -274,7 +334,7 @@ int main()
 	//ch2task1();
 	//ch2t2();
 	//ch2t3();
-	ch3();
+	ch3attemp2();
 
 
 	

@@ -14,6 +14,18 @@ double dReLU(double value)
 {
 	return value > 0 ? 1. : 0.;
 }
+Matrix ReLU(Matrix m)
+{
+	for (auto& elem : m.data)
+		elem = ReLU(elem);
+	return m;
+}
+Matrix dReLU(Matrix m)
+{
+	for (auto& elem : m.data)
+		elem = dReLU(elem);
+	return m;
+}
 
 
 
@@ -57,6 +69,9 @@ Matrix Model::predict(Matrix input)
 		.fillRandom(-1.,1.);  // TODO
 	
 	Matrix ret = layers[0] * input;
+	// for now handle only 1 hidden layer with hard coded relu
+	//for (auto& elem : ret.data)
+	//	elem = ReLU(elem);
 
 	for (auto& layer : layers | std::ranges::views::drop(1))
 		ret = layer * ret;
@@ -65,19 +80,20 @@ Matrix Model::predict(Matrix input)
 
 void Model::learn(int N, Matrix input, Matrix expected, double learningRate)
 {
-	
+	Matrix output;
 	for (int i = 0; i < N; i++) {
-		auto output = predict(input);
+		output = predict(input);
 		auto delta = 2. / output.getRows() * (output - expected) * input.transpose();
 		auto updatedWeights = getLayer(0) - learningRate * delta;
 		updateLayer(0, updatedWeights);
 	}
 		error = 0.;
-		for (const auto& elem : (predict(input) - expected).data)
+		for (const auto& elem : (output - expected).data)
 		{
 			error += elem * elem;
 		}
 		error /= expected.rows;
+		
 }
 
 void Model::serialize(std::string_view s)

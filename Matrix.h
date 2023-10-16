@@ -46,6 +46,7 @@ public:
 
 	// ew - element wise
 	Matrix ewSquare() const;
+	Matrix hadamardProduct(Matrix) const;
 
 
 };

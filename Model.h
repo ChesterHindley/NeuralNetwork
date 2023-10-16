@@ -4,8 +4,6 @@
 class Model
 {
 	// first matrix is layer closest to input
-	// maybe map with keys being int where digits mean indices of matrices multiplied for given value
-	// or possibly key being string with the same rule
 
 	std::vector<Matrix> layers;
 	// need only last hidden layer output for updating output layer
@@ -21,8 +19,12 @@ public:
 	void serialize(std::string_view);
 	static Model deserialize(std::string_view);
 
-	Model& addLayer(Matrix mat); // utility function for deserialization
+	Model& addLayer(Matrix mat);
 	double getError() const;
 private:
 };
 
+double ReLU(double);
+double dReLU(double);
+Matrix ReLU(Matrix);
+Matrix dReLU(Matrix);
