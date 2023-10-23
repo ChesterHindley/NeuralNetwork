@@ -9,6 +9,7 @@ class Model
 	// need only last hidden layer output for updating output layer
 	Matrix layerOutputCache;
 	double error;
+	int numberOfOutputNeurons;
 
 public:
 	Model& addLayer(int N, double min = -1.0, double max = 1.0);
@@ -21,10 +22,18 @@ public:
 
 	Model& addLayer(Matrix mat);
 	double getError() const;
+	int getNumberOfOutputNeurons() const;
 private:
 };
 
-double ReLU(double);
-double dReLU(double);
-Matrix ReLU(Matrix);
-Matrix dReLU(Matrix);
+namespace activationFunctions {
+	double ReLU(double);
+	double dReLU(double);
+	Matrix ReLU(Matrix);
+	Matrix dReLU(Matrix);
+
+	double sigmoid(double);
+	double dSigmoid(double);
+	Matrix sigmoid(Matrix);
+	Matrix dSigmoid(Matrix);
+}

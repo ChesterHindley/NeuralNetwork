@@ -53,8 +53,9 @@ namespace activationFunctions {
 
 Model& Model::addLayer(int N, double min, double max)
 {
-	auto static constexpr numberOfInputs = 1;
-	Matrix mat(N, !layers.empty() ? layers.back().getRows() :  numberOfInputs);
+
+	numberOfOutputNeurons = N;
+	Matrix mat(N, !layers.empty() ? layers.back().getRows() :  1);
 	mat.fillRandom(min, max);
 	layers.push_back(std::move(mat));
 	return *this;
@@ -73,6 +74,7 @@ Matrix Model::getLayer(int N) const
 
 Model& Model::addLayer(Matrix mat)
 {
+	numberOfOutputNeurons = mat.getRows();
 	layers.push_back(std::move(mat));
 	return *this;
 }
@@ -80,6 +82,11 @@ Model& Model::addLayer(Matrix mat)
 double Model::getError() const
 {
 	return error;
+}
+
+int Model::getNumberOfOutputNeurons() const
+{
+	return numberOfOutputNeurons;
 }
 
 Matrix Model::predict(Matrix input) 

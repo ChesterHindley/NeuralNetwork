@@ -316,13 +316,42 @@ void ch3attemp2()
 
 	constexpr static double alpha = 0.01;
 	auto output = m.predict(input);
-	auto delta = 2. / m.getLayer(1).getRows() * (output - expected);
+	//auto delta = 2. / m.getLayer(1).getRows() * (output - expected);
 
 
-	auto dWh = m.getLayer(0) * delta;
+	//auto dWh = m.getLayer(0) * delta;
+	auto dH = 2.0 / m.getNumberOfOutputNeurons() * (m.getLayer(0).transpose().hadamardProduct(output - expected));
 
+	//dWh = dWh.hadamardProduct( activationFunctions::dReLU(m.getLayer(0)));
 
-	dWh = dWh.hadamardProduct( activationFunctions::dReLU(m.getLayer(0)));
+}
+void ch3t1() 
+{
+	Matrix input(
+		{
+			0.5,0.1,0.2,0.8,
+			0.75,0.3,0.1,0.9,
+			0.1,0.7,0.6,0.2
+		}, 3, 4
+	);
+
+	Matrix Wh(
+		{
+			0.1,0.1,-0.3,
+			0.1,0.2,0.0,
+			0.0,0.7,0.1,
+			0.2,0.4,0.0,
+			-0.3,0.5,0.1
+		}, 5, 3);
+	Matrix Wy(
+		{
+			0.7,0.9,-0.4,0.8,0.1,
+			0.8,0.5,0.3,0.1,0.0,
+			-0.3,0.9,0.3,0.1,-0.2
+		}, 3, 5);
+	Model m;
+	m.addLayer(std::move(Wh)).addLayer(std::move(Wy));
+	//m.learn(100,)
 
 }
 int main()

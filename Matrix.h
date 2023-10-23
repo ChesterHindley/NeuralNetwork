@@ -50,3 +50,15 @@ public:
 
 
 };
+
+namespace activationFunctions {
+	double ReLU(double);
+	double dReLU(double);
+	Matrix ReLU(Matrix);
+	Matrix dReLU(Matrix);
+
+	double sigmoid(double);
+	double dSigmoid(double);
+	Matrix sigmoid(Matrix);
+	Matrix dSigmoid(Matrix);
+}
