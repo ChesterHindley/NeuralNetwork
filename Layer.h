@@ -8,11 +8,13 @@ class Layer
 
 	Matrix m;
 	ActivationFunction f;
+	ActivationFunction df;
 
 public:
-	Layer(Matrix, ActivationFunction);
+	Layer(Matrix, ActivationFunction function, ActivationFunction derivative);
 	Matrix calculate(Matrix input);
 	void update(Matrix m);
+
 
 };
 

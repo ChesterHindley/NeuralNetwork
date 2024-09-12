@@ -8,11 +8,15 @@ class Matrix
 public:
 	using dataType = double;
 
+
+	Matrix& operator-=(const Matrix& m);
+
 	friend Matrix operator+(const Matrix& m1, const Matrix& m2);
 	friend Matrix operator-(const Matrix& m1, const Matrix& m2);
 	friend Matrix operator*(const Matrix& m1, const Matrix& m2);
 	friend Matrix operator*(dataType scalar, const Matrix& m);
 	friend Matrix operator*(const Matrix& m, dataType scalar);
+	
 
 	friend std::ostream& operator<<(std::ostream& out, const Matrix& m);
 
@@ -42,11 +46,19 @@ public:
 	int getRows() const;
 	int getCols() const;
 	std::vector<dataType> getCol(int N) const;
+	std::vector<dataType> getRow(int N) const;
 	Matrix vectorize() const;
 
 	// ew - element wise
 	Matrix ewSquare() const;
 	Matrix hadamardProduct(Matrix) const;
+	Matrix KroneckerProduct(Matrix) const;
+	static Matrix oneHot(Matrix);
+	//flattens to column vector
+	Matrix flattenRowMajor() const;
+
+	//flattens to column vector
+	Matrix flattenColMajor() const;
 
 
 };
@@ -61,4 +73,9 @@ namespace activationFunctions {
 	double dSigmoid(double);
 	Matrix sigmoid(Matrix);
 	Matrix dSigmoid(Matrix);
+
+	double tanh(double);
+	double dTanh(double);
+	Matrix tanh(Matrix);
+	Matrix dTanh(Matrix);
 }

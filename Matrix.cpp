@@ -5,6 +5,12 @@
 #include <random>
 #include <fstream>
 #include <ranges>
+#include <iomanip>
+
+Matrix& Matrix::operator-=(const Matrix& m) {
+	*this = *this - m;
+	return *this;
+}
 
 // REMEMBER THAT SUCH INITIALIZATION WORKS ONLY FOR ROW MAJOR MATRICES
 Matrix::Matrix(std::initializer_list<dataType> l, int rows_, int cols_) : data{ l }, rows{ rows_ }, cols{ cols_ }
@@ -72,6 +78,17 @@ std::vector<Matrix::dataType> Matrix::getCol(int N) const
 	return ret;
 }
 
+std::vector<Matrix::dataType> Matrix::getRow(int N) const {
+	std::vector<dataType> ret;
+	ret.reserve(cols);
+	for (int j = 0; j < cols; j++)
+	{
+		ret.push_back(this->operator()(N, j));
+	}
+	return ret;
+}
+
+
 Matrix Matrix::vectorize() const
 {
 	std::vector<dataType> ret;
@@ -102,11 +119,69 @@ Matrix Matrix::hadamardProduct(Matrix m) const
 	 Matrix ret(*this);
 	 for (int i = 0; i < cols; i++)
 		 for (int j = 0; j < rows; j++)
-			 ret(i, j) *= m(i, j);
+			 ret(j, i) *= m(j, i);
 	 return ret;
 	 
 
 	 
+}
+
+Matrix Matrix::KroneckerProduct(Matrix m) const
+{
+	std::cout << *this;
+	std::cout << m;
+	std::vector<double> result;
+	for (const auto& [a, b] : std::ranges::views::cartesian_product(data, m.data))
+	{
+		result.push_back(a * b);
+		std::cout << "(" << a << ", " << b << ")\n";
+	}
+	return Matrix(std::move(result), result.size(), 1);
+}
+
+// 
+Matrix Matrix::oneHot(Matrix m)
+{
+	for (int col = 0; col < m.getCols(); col++)
+	{
+		double max = std::numeric_limits<double>::min();
+		int index = -1;
+		for (int row = 0; row < m.getRows(); row++)
+		{
+			if (m(row, col) > max)
+			{
+				max = m(row, col);
+				index = row;
+			}
+		}
+
+		for (int row = 0; row < m.getRows(); row++)
+		{
+			if (row == index)
+				m(row, col) = 1;
+			else m(row, col) = 0;
+		}
+		
+	}
+	return m;
+}
+
+Matrix Matrix::flattenRowMajor() const {
+	std::vector<double> v(rows * cols);
+
+	for (int i = 0; i < rows; i++)
+		for (int j = 0; j < cols; j++)
+			v[i * cols + j] = (*this)(i, j);
+	return Matrix(std::move(v), rows * cols, 1);
+}
+
+Matrix Matrix::flattenColMajor() const {
+	std::vector<double> v(rows * cols);
+
+	for (int i = 0; i < cols; i++)
+		for (int j = 0; j < rows; j++)
+			v[i * rows + j] = (*this)(i, j);
+	return Matrix(std::move(v), rows * cols, 1);
 }
 
 
@@ -184,7 +259,7 @@ std::ostream& operator<<(std::ostream& out, const Matrix& m)
 	for (int i = 0; i < m.rows; i++) {
 		if (i) out << '\n';
 		for (int j = 0; j < m.cols; j++)
-			out << m(i, j) << ' ';
+			out <<  m(i, j) << ' ';
 	}
 	out << "\n";
 	return out;

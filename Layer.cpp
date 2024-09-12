@@ -1,13 +1,13 @@
 #include "Layer.h"
 
-Layer::Layer(Matrix m_, ActivationFunction fun_) : m{ m }, f{fun_}
+Layer::Layer(Matrix m_, ActivationFunction fun_, ActivationFunction dfun_) : m{ m_ }, f{fun_}, df{dfun_}
 {
 
 }
 
 Matrix Layer::calculate(Matrix input)
 {
-	return f(m);
+	return f ? f(m*input) : m*input;
 }
 
 void Layer::update(Matrix m_)
